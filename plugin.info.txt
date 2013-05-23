@@ -1,0 +1,7 @@
+base   dwbc
+author Werner Flamme
+email  w.flamme@web.de
+date   2013-05-23
+name   Dilbert for DokuWiki
+desc   Displays the daily B. C. cartoon from johnhartstudios.com
+url    https://github.com/wernerflamme/dwbc
