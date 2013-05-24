@@ -17,6 +17,8 @@ require_once(DOKU_PLUGIN . 'syntax.php');
 /**
  * All DokuWiki plugins to extend the parser/rendering mechanism
  * need to inherit from this class
+ *
+ * see https://www.dokuwiki.org/devel:syntax_plugins
  **/
 class syntax_plugin_dwbc extends DokuWiki_Syntax_Plugin {
 
@@ -84,7 +86,7 @@ class syntax_plugin_dwbc extends DokuWiki_Syntax_Plugin {
     /**
      * Create output
      * @param $mode       current mode of DokuWiki 
-     *                    (see http://wiki.splitbrain.org/plugin:tutorial)
+     *                    (see https://www.dokuwiki.org/devel:syntax_plugins)
      * @param $renderer   DokuWiki's rendering object
      * @param $data       (not looked at)
      * @return true, if rendering happens, false in all other cases
@@ -104,23 +106,24 @@ class syntax_plugin_dwbc extends DokuWiki_Syntax_Plugin {
             $feed->set_feed_url($url);
             // get data
             $feed->init();
-            // ...and mangle^Wmanage it :-)
+            // ...and manage it
             $feed->handle_content_type();
             // we only want the cartoon that was published during last 24 hours
-            $yesterday = time() - (24 * 60 * 60);
+            $yesterday    = time() - (24 * 60 * 60);
             // loop at the items in the feed
-            foreach ($feed->get_items() as $item) {
+            foreach ($feed->get_items() as $num => $item) {
                 // if the item has been published during the last 24 hours...
                 if ($item->get_date('U') > $yesterday) {
-                    $feedDescription = hsc($item->get_description());
-                    $image           = $this->_returnImage($feedDescription);
-                    $imageurl        = $this->_scrapeImage($image);
-                    $src             = $imageurl;
-                    $title           = 'B. C. Daily Cartoon';
-                    $align           = null;
-                    $width           = null;
-                    $height          = null;
-                    $cache           = false;
+                    //$feedDescription = hsc($item->get_description());
+                    $relevant = hsc($item->get_content());
+                    $image    = $this->_returnImage($relevant);
+                    $imageurl = $this->_scrapeImage($image);
+                    $src      = $imageurl;
+                    $title    = 'B. C. Daily Cartoon';
+                    $align    = null;
+                    $width    = null;
+                    $height   = null;
+                    $cache    = false;
                     $renderer->externalmedia($src, $title, $align, $width, $height, $cache);
                 } // if ($item->get_date('U') > $yesterday)
             } // foreach ($feed->get_items() as $item)
@@ -128,7 +131,7 @@ class syntax_plugin_dwbc extends DokuWiki_Syntax_Plugin {
         } // if ($mode == 'xhtml')
         return false;
     } // function render
-    
+
     /**
      * taken from esteban on http://simplepie.org/support/viewtopic.php?id=643
      * Last edited by esteban (23 April 2007 03:06:30)
